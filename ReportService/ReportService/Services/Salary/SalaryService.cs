@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using ReportService.Domain;
 using ReportService.Services.EmployeeCode;
 
 namespace ReportService.Services.Salary;

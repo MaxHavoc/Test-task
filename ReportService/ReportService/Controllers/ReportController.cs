@@ -1,52 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using ReportService.Domain;
 using ReportService.Models;
 using ReportService.Repositories;
+using ReportService.Services.ReportFormatter;
 using ReportService.Services.Salary;
+using ReportService.Utils;
 
 namespace ReportService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReportController : ControllerBase
+public class ReportController(IEmployeeRepository repository, ISalaryService salaryService, IReportFormatter  reportFormatter)
+    : ControllerBase
 {
-    private readonly IEmployeeRepository _repository;
-    private readonly ISalaryService _salaryService;
-
-    public ReportController(IEmployeeRepository repository, ISalaryService salaryService)
-    {
-        _repository = repository;
-        _salaryService = salaryService;
-    }
-    
     [HttpGet("{year}/{month}")]
     public async Task<IActionResult> Download(int year, int month)
     {
-        var report = new Report() { S = "Имя месяца" };
-        List<Employee> employees = (await _repository.GetAllAsync()).ToList();
+        List<Employee> employees = (await repository.GetAllAsync()).ToList();
         
         foreach (Employee emp in employees)
         {
-            emp.Salary = await _salaryService.CalculateAsync(emp.Inn);
+            emp.Salary = await salaryService.CalculateAsync(emp.Inn);
         }
-        
-        var grouped = employees
-            .GroupBy(e => e.Department ?? "Без департамента")
-            .Select(g => new {
-                Department = g.Key,
-                Employees = g.ToList()
-            });
-        
-        
-        
-        report.Save();
-        var file = System.IO.File.ReadAllBytes("D:\\report.txt");
-        var response = File(file, "application/octet-stream", "report.txt");
-        return response;
+
+        string report = reportFormatter.Format(employees, DateUtils.FormatPeriodTitle(year, month));
+        byte[] bytes = Encoding.UTF8.GetBytes(report);
+        return File(bytes, "text/plain; charset=utf-8", "report.txt");
+
     }
 }
