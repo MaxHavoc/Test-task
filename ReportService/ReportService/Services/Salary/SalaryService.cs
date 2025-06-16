@@ -12,7 +12,7 @@ namespace ReportService.Services.Salary;
 
 public class SalaryService(HttpClient http, IEmployeeCodeService employeeCodeService, IConfiguration config) : ISalaryService
 {
-    private readonly string _salaryApiUrl = config["SalaryApiUrl"] ?? "http://salary.local/api/empcode";
+    private readonly string _salaryApiUrl = config["SalaryApiUrl"];
     public async Task<decimal> CalculateAsync(string inn, CancellationToken ct)
     {
         string buhCode = await employeeCodeService.GetCodeAsync(inn, ct);

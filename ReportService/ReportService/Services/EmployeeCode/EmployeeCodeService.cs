@@ -7,7 +7,7 @@ namespace ReportService.Services.EmployeeCode;
 
 public class EmployeeCodeService(HttpClient http, IConfiguration config) : IEmployeeCodeService
 {
-    private readonly string _buhApiUrl = config["BuhApiUrl"] ?? "http://buh.local/api/inn/";
+    private readonly string _buhApiUrl = config["BuhApiUrl"];
 
     public async Task<string> GetCodeAsync(string inn, CancellationToken ct)
     {
