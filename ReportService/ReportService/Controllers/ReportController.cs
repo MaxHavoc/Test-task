@@ -13,22 +13,12 @@ namespace ReportService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReportController : ControllerBase
+public class ReportController(
+    IEmployeeRepository repository,
+    ISalaryService salaryService,
+    IReportFormatter reportFormatter)
+    : ControllerBase
 {
-    private readonly IEmployeeRepository _repository;
-    private readonly ISalaryService _salaryService;
-    private readonly IReportFormatter _reportFormatter;
-
-    public ReportController(
-        IEmployeeRepository repository,
-        ISalaryService salaryService,
-        IReportFormatter reportFormatter)
-    {
-        _repository = repository;
-        _salaryService = salaryService;
-        _reportFormatter = reportFormatter;
-    }
-
     [HttpGet("{year}/{month}")]
     public async Task<IActionResult> Download(int year, int month)
     {
@@ -38,17 +28,17 @@ public class ReportController : ControllerBase
         if (year < 1)
             return BadRequest("Год должен быть положительным");
 
-        var employees = (await _repository.GetAllAsync()).ToList();
+        var employees = (await repository.GetAllAsync()).ToList();
 
         var salaryTasks = employees.Select(async emp =>
         {
-            emp.Salary = await _salaryService.CalculateAsync(emp.Inn);
+            emp.Salary = await salaryService.CalculateAsync(emp.Inn);
             return emp;
         });
 
         await Task.WhenAll(salaryTasks);
 
-        string report = _reportFormatter.Format(employees, DateUtils.FormatPeriodTitle(year, month));
+        string report = reportFormatter.Format(employees, DateUtils.FormatPeriodTitle(year, month));
         var bytes = Encoding.UTF8.GetBytes(report);
 
         return File(bytes, "text/plain; charset=utf-8", "report.txt");
