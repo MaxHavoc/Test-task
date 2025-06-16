@@ -1,30 +1,32 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using ReportService.Services.EmployeeCode;
 
 namespace ReportService.Services.Salary;
 
-public class SalaryService(HttpClient http, IEmployeeCodeService employeeCodeService) : ISalaryService
+public class SalaryService(HttpClient http, IEmployeeCodeService employeeCodeService, IConfiguration config) : ISalaryService
 {
-    public async Task<decimal> CalculateAsync(string inn)
+    private readonly string _salaryApiUrl = config["SalaryApiUrl"] ?? "http://salary.local/api/empcode";
+    public async Task<decimal> CalculateAsync(string inn, CancellationToken ct)
     {
-        string buhCode = await GetBuhCodeAsync(inn);
+        string buhCode = await employeeCodeService.GetCodeAsync(inn, ct);
 
         string requestBody = JsonSerializer.Serialize(new { BuhCode = buhCode });
         StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await http.PostAsync($"http://salary.local/api/empcode/{inn}", content);
+        HttpResponseMessage response = await http.PostAsync($"{_salaryApiUrl}{inn}", content, ct);
         response.EnsureSuccessStatusCode();
 
-        string responseText = await response.Content.ReadAsStringAsync();
-        return decimal.Parse(responseText, CultureInfo.InvariantCulture);
-    }
+        string responseText = await response.Content.ReadAsStringAsync(ct);
+        if (!decimal.TryParse(responseText, NumberStyles.Number, CultureInfo.InvariantCulture, out var salary))
+            throw new FormatException($"Invalid salary value returned from API: {responseText}");
 
-    private async Task<string> GetBuhCodeAsync(string inn)
-    {
-        return await employeeCodeService.GetCodeAsync(inn);
+        return decimal.Parse(responseText, CultureInfo.InvariantCulture);
     }
 }

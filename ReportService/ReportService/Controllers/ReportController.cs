@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ReportService.Models;
@@ -20,7 +21,7 @@ public class ReportController(
     : ControllerBase
 {
     [HttpGet("{year}/{month}")]
-    public async Task<IActionResult> Download(int year, int month)
+    public async Task<IActionResult> Download(int year, int month, CancellationToken ct)
     {
         if (month < 1 || month > 12)
             return BadRequest("Месяц должен быть от 1 до 12");
@@ -28,11 +29,11 @@ public class ReportController(
         if (year < 1)
             return BadRequest("Год должен быть положительным");
 
-        var employees = (await repository.GetAllAsync()).ToList();
+        var employees = (await repository.GetAllAsync(ct)).ToList();
 
         var salaryTasks = employees.Select(async emp =>
         {
-            emp.Salary = await salaryService.CalculateAsync(emp.Inn);
+            emp.Salary = await salaryService.CalculateAsync(emp.Inn, ct);
             return emp;
         });
 

@@ -1,12 +1,16 @@
 ﻿using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace ReportService.Services.EmployeeCode;
 
-public class EmployeeCodeService(HttpClient http) : IEmployeeCodeService
+public class EmployeeCodeService(HttpClient http, IConfiguration config) : IEmployeeCodeService
 {
-    public async Task<string> GetCodeAsync(string inn)
+    private readonly string _buhApiUrl = config["BuhApiUrl"] ?? "http://buh.local/api/inn/";
+
+    public async Task<string> GetCodeAsync(string inn, CancellationToken ct)
     {
-        return await http.GetStringAsync($"http://buh.local/api/inn/{inn}");
+        return await http.GetStringAsync(_buhApiUrl + inn, ct);
     }
 }
