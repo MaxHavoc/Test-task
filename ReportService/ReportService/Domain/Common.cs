@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text.Json;
+using ReportService.Models;
 
 namespace ReportService.Domain
 {
