@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Npgsql;
 using ReportService.Domain;
 
-namespace ReportService.Controllers
+namespace ReportService.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ReportController : ControllerBase
 {
-    [Route("api/[controller]")]
-    public class ReportController : Controller
+    [HttpGet("{year}/{month}")]
+    public IActionResult Download(int year, int month)
     {
-        [HttpGet]
-        [Route("{year}/{month}")]
-        public IActionResult Download(int year, int month)
-        {
-            var actions = new List<(Action<Employee, Report>, Employee)>();
+        var actions = new List<(Action<Employee, Report>, Employee)>();
             var report = new Report() { S = MonthNameResolver.MonthName.GetName(year, month) };
             var connString = "Host=192.168.99.100;Username=postgres;Password=1;Database=employee";
             
@@ -68,6 +65,5 @@ namespace ReportService.Controllers
             var file = System.IO.File.ReadAllBytes("D:\\report.txt");
             var response = File(file, "application/octet-stream", "report.txt");
             return response;
-        }
     }
 }
