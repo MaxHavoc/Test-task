@@ -33,17 +33,19 @@ public class ReportController(
         if (year < 1)
             return BadRequest("Year must be a positive number");
 
-        var employees = (await repository.GetAllAsync(ct)).ToList();
+        List<Employee> employees = (await repository.GetAllAsync(ct)).ToList();
         
         logger.LogInformation($"Retrieved {employees.Count} employees from database");
         
-        var salaryTasks = employees.Select(async emp =>
+        List<Task> tasks = [];
+        foreach (Employee emp in employees)
         {
-            emp.Salary = await salaryService.CalculateAsync(emp.Inn, ct);
-            return emp;
-        });
-
-        await Task.WhenAll(salaryTasks);
+            tasks.Add(Task.Run(async () =>
+            {
+                emp.Salary = await salaryService.CalculateAsync(emp.Inn, ct);
+            }, ct));
+        }
+        await Task.WhenAll(tasks);
 
         string report = reportFormatter.Format(employees, DateUtils.FormatPeriodTitle(year, month));
         var bytes = Encoding.UTF8.GetBytes(report);
