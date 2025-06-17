@@ -1,8 +1,13 @@
-version: '3.4'
+version: '3.8'
 
 services:
   reportservice:
-    image: reportservice
     build:
       context: .
       dockerfile: ReportService/Dockerfile
+    ports:
+      - "61378:61378"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://0.0.0.0:61378
+    restart: unless-stopped
