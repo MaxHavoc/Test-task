@@ -21,6 +21,9 @@ public class ReportFormatter : IReportFormatter
 
         foreach (IGrouping<string, Employee> group in grouped)
         {
+            if (!group.Any())
+                continue;
+            
             sb.AppendLine("---");
             sb.AppendLine(group.Key);
             sb.AppendLine();
@@ -29,23 +32,21 @@ public class ReportFormatter : IReportFormatter
 
             foreach (Employee emp in group)
             {
-                string namePadded = emp.Name.PadRight(40);
-                string salaryFormatted = $"{emp.Salary:0}р";
-                sb.AppendLine($"{namePadded}{salaryFormatted}");
+                sb.AppendLine($"{emp.Name,-40}{emp.Salary,10:0}р");
 
                 depTotal += emp.Salary;
             }
 
-            total = depTotal;
+            total += depTotal;
 
             sb.AppendLine();
-            sb.AppendLine($"Всего по отделу\t\t\t{depTotal:0}р");
+            sb.AppendLine($"{ "Всего по отделу",-40}{depTotal,10:0}р");
             sb.AppendLine();
         }
 
         sb.AppendLine("---");
         sb.AppendLine();
-        sb.AppendLine($"Всего по предприятию\t\t\t{total:0}р");
+        sb.AppendLine($"{ "Всего по предприятию",-40}{total,10:0}р");
 
         return sb.ToString();
     }
