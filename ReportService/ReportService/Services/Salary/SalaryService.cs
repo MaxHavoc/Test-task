@@ -27,6 +27,6 @@ public class SalaryService(HttpClient http, IEmployeeCodeService employeeCodeSer
         if (!decimal.TryParse(responseText, NumberStyles.Number, CultureInfo.InvariantCulture, out var salary))
             throw new FormatException($"Invalid salary value returned from API: {responseText}");
 
-        return decimal.Parse(responseText, CultureInfo.InvariantCulture);
+        return salary;
     }
 }

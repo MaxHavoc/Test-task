@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using ReportService.Models;
 using ReportService.Repositories;
 using ReportService.Services.ReportFormatter;
@@ -17,20 +18,25 @@ namespace ReportService.Controllers;
 public class ReportController(
     IEmployeeRepository repository,
     ISalaryService salaryService,
-    IReportFormatter reportFormatter)
+    IReportFormatter reportFormatter,
+    ILogger<ReportController> logger)
     : ControllerBase
 {
     [HttpGet("{year}/{month}")]
     public async Task<IActionResult> Download(int year, int month, CancellationToken ct)
     {
+        logger.LogInformation($"Report generation requested for {year}/{month}");
+        
         if (month < 1 || month > 12)
-            return BadRequest("Месяц должен быть от 1 до 12");
+            return BadRequest("Month must be between 1 and 12");
 
         if (year < 1)
-            return BadRequest("Год должен быть положительным");
+            return BadRequest("Year must be a positive number");
 
         var employees = (await repository.GetAllAsync(ct)).ToList();
-
+        
+        logger.LogInformation($"Retrieved {employees.Count} employees from database");
+        
         var salaryTasks = employees.Select(async emp =>
         {
             emp.Salary = await salaryService.CalculateAsync(emp.Inn, ct);
@@ -41,7 +47,8 @@ public class ReportController(
 
         string report = reportFormatter.Format(employees, DateUtils.FormatPeriodTitle(year, month));
         var bytes = Encoding.UTF8.GetBytes(report);
-
+        
+        logger.LogInformation($"Report generated, size {bytes.Length} bytes");
         return File(bytes, "text/plain; charset=utf-8", "report.txt");
     }
 }
