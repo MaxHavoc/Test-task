@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 using ReportService.Models;
 using ReportService.Repositories;
 using ReportService.Services.ReportFormatter;
-using ReportService.Services.Salary;
+using ReportService.Services.SalaryClient;
 using ReportService.Utils;
 
 namespace ReportService.Controllers;

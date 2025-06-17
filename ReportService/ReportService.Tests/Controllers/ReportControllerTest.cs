@@ -6,7 +6,7 @@ using ReportService.Controllers;
 using ReportService.Models;
 using ReportService.Repositories;
 using ReportService.Services.ReportFormatter;
-using ReportService.Services.Salary;
+using ReportService.Services.SalaryClient;
 
 namespace ReportService.Tests.Controllers;
 

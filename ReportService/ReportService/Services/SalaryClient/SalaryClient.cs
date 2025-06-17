@@ -6,9 +6,9 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using ReportService.Services.EmployeeCode;
+using ReportService.Services.EmployeeCodeClient;
 
-namespace ReportService.Services.Salary;
+namespace ReportService.Services.SalaryClient;
 
 public class SalaryClient(HttpClient http, IEmployeeCodeClient employeeCodeService, IConfiguration config) : ISalaryClient
 {

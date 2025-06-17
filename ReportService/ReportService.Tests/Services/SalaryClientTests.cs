@@ -2,8 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Moq;
 using Moq.Protected;
-using ReportService.Services.EmployeeCode;
-using ReportService.Services.Salary;
+using ReportService.Services.EmployeeCodeClient;
+using ReportService.Services.SalaryClient;
 
 namespace ReportService.Tests.Services;
 

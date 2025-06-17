@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace ReportService.Services.EmployeeCode;
+namespace ReportService.Services.EmployeeCodeClient;
 
 public interface IEmployeeCodeClient
 {

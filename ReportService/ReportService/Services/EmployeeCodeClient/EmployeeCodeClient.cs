@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace ReportService.Services.EmployeeCode;
+namespace ReportService.Services.EmployeeCodeClient;
 
 public class EmployeeCodeClient(HttpClient http, IConfiguration config, ILogger<EmployeeCodeClient> logger)
     : IEmployeeCodeClient

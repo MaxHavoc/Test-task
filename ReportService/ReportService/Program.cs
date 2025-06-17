@@ -3,9 +3,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ReportService.Middleware;
 using ReportService.Repositories;
-using ReportService.Services.EmployeeCode;
+using ReportService.Services.EmployeeCodeClient;
 using ReportService.Services.ReportFormatter;
-using ReportService.Services.Salary;
+using ReportService.Services.SalaryClient;
 
 var builder = WebApplication.CreateBuilder(args);
 
