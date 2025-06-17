@@ -7,19 +7,19 @@ using ReportService.Services.Salary;
 
 namespace ReportService.Tests.Services;
 
-public class SalaryServiceTests
+public class SalaryClientTests
 {
     private const string Inn = "1234567890";
     private const string BuhCode = "ABC123";
     private const string SalaryApiUrl = "http://salary.local/api/empcode/";
 
-    private readonly Mock<IEmployeeCodeService> _employeeCodeServiceMock;
+    private readonly Mock<IEmployeeCodeClient> _employeeCodeServiceMock;
     private readonly Mock<HttpMessageHandler> _handlerMock;
-    private readonly SalaryService _service;
+    private readonly SalaryClient _service;
 
-    public SalaryServiceTests()
+    public SalaryClientTests()
     {
-        _employeeCodeServiceMock = new Mock<IEmployeeCodeService>();
+        _employeeCodeServiceMock = new Mock<IEmployeeCodeClient>();
         _employeeCodeServiceMock.Setup(s => s.GetCodeAsync(Inn, It.IsAny<CancellationToken>()))
             .ReturnsAsync(BuhCode);
 
@@ -30,7 +30,7 @@ public class SalaryServiceTests
         var configurationMock = new Mock<IConfiguration>();
         configurationMock.Setup(c => c["SalaryApiUrl"]).Returns(SalaryApiUrl);
 
-        _service = new SalaryService(httpClient, _employeeCodeServiceMock.Object, configurationMock.Object);
+        _service = new SalaryClient(httpClient, _employeeCodeServiceMock.Object, configurationMock.Object);
     }
 
     [Fact]

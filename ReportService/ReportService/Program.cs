@@ -12,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IReportFormatter, ReportFormatter>();
-builder.Services.AddHttpClient<IEmployeeCodeService, EmployeeCodeService>();
-builder.Services.AddHttpClient<ISalaryService, SalaryService>();
+builder.Services.AddHttpClient<IEmployeeCodeClient, EmployeeCodeClient>();
+builder.Services.AddHttpClient<ISalaryClient, SalaryClient>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();

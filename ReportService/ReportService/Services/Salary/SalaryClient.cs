@@ -10,7 +10,7 @@ using ReportService.Services.EmployeeCode;
 
 namespace ReportService.Services.Salary;
 
-public class SalaryService(HttpClient http, IEmployeeCodeService employeeCodeService, IConfiguration config) : ISalaryService
+public class SalaryClient(HttpClient http, IEmployeeCodeClient employeeCodeService, IConfiguration config) : ISalaryClient
 {
     private readonly string _salaryApiUrl = config["SalaryApiUrl"];
     public async Task<decimal> CalculateAsync(string inn, CancellationToken ct)

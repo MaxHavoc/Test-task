@@ -17,7 +17,7 @@ namespace ReportService.Controllers;
 [Route("api/[controller]")]
 public class ReportController(
     IEmployeeRepository repository,
-    ISalaryService salaryService,
+    ISalaryClient salaryService,
     IReportFormatter reportFormatter,
     ILogger<ReportController> logger)
     : ControllerBase
