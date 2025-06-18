@@ -17,7 +17,7 @@ namespace ReportService.Controllers;
 [Route("api/[controller]")]
 public class ReportController(
     IEmployeeRepository repository,
-    ISalaryClient salaryService,
+    ISalaryClient salaryClient,
     IReportFormatter reportFormatter,
     ILogger<ReportController> logger)
     : ControllerBase
@@ -42,7 +42,7 @@ public class ReportController(
         {
             tasks.Add(Task.Run(async () =>
             {
-                emp.Salary = await salaryService.CalculateAsync(emp.Inn, ct);
+                emp.Salary = await salaryClient.CalculateAsync(emp.Inn, ct);
             }, ct));
         }
         await Task.WhenAll(tasks);

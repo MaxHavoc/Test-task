@@ -10,12 +10,12 @@ using ReportService.Services.EmployeeCodeClient;
 
 namespace ReportService.Services.SalaryClient;
 
-public class SalaryClient(HttpClient http, IEmployeeCodeClient employeeCodeService, IConfiguration config) : ISalaryClient
+public class SalaryClient(HttpClient http, IEmployeeCodeClient employeeCodeClient, IConfiguration config) : ISalaryClient
 {
     private readonly string _salaryApiUrl = config["SalaryApiUrl"];
     public async Task<decimal> CalculateAsync(string inn, CancellationToken ct)
     {
-        string buhCode = await employeeCodeService.GetCodeAsync(inn, ct);
+        string buhCode = await employeeCodeClient.GetCodeAsync(inn, ct);
 
         string requestBody = JsonSerializer.Serialize(new { BuhCode = buhCode });
         StringContent content = new StringContent(requestBody, Encoding.UTF8, "application/json");

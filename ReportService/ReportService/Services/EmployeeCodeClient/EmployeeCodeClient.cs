@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ReportService.Services.EmployeeCodeClient;
 
-public class EmployeeCodeClient(HttpClient http, IConfiguration config, ILogger<EmployeeCodeClient> logger)
+public class EmployeeCodeClient(HttpClient http, IConfiguration config)
     : IEmployeeCodeClient
 {
     private readonly string _buhApiUrl = config["BuhApiUrl"];
